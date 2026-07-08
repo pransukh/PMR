@@ -1,1 +1,46 @@
-<router-outlet><router-outlet />
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            Patient Management
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a routerLink="/dashboard" routerLinkActive="active"><span style="margin-right: 10px;">📊</span>Dashboard</a>
+            <a routerLink="/appointments" routerLinkActive="active"><span style="margin-right: 10px;">🗓️</span>Appointments</a>
+            <a routerLink="/users" routerLinkActive="active"><span style="margin-right: 10px;">🙋‍♂️</span>Users</a>
+            <a routerLink="/patients" routerLinkActive="active"><span style="margin-right: 10px; background-color: white; border-radius: 20px;">🦽</span>Patients</a>
+            <a routerLink="/reports" routerLinkActive="active"><span style="margin-right: 10px;">📜</span>Reports</a>
+            <a routerLink="/settings" routerLinkActive="active"><span style="margin-right: 10px;">⚙️</span>Settings</a>
+            <a routerLink="/logout" routerLinkActive="active"><span style="margin-right: 10px;">📴</span>Logout</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            Powered by
+            <img src="10x8.svg" />
+            CompSom
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="main-header">
+            <ht-app-header></ht-app-header>
+        </header>
+
+        <section class="content">
+            <router-outlet></router-outlet>
+        </section>
+
+        <footer class="main-footer">
+            CompSom Copyright © 2026
+        </footer>
+
+    </main>
+
+</div>

@@ -1,0 +1,38 @@
+.search-icon {
+    background: url('/public/image1.png') no-repeat center;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    background-size: contain;
+}
+
+.appointment-card {
+    background: #fff;
+    border: 1px solid #e3e7ee;
+    border-radius: 15px;
+    padding: 20px;
+
+    height: 600px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.appointment-header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    height: 50px;
+    background-color: #a3d0df;
+    align-items: center;
+    padding: 0px 10px 0px 10px;
+    border-radius: 5px;
+}
+
+.appointment-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+}

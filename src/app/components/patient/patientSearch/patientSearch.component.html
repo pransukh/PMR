@@ -1,0 +1,168 @@
+<div class="col-12 flex-row space-between mb-20">
+    <div class="flex-row gap-15 align-center">
+        <h2 class="title">Patient Search</h2>
+    </div>
+</div>
+
+<div class = "col-12 flex-row ">
+    <div class="col-4 flex-col gap-20 mb-20">
+
+        <!-- LEFT CARD -->
+        <div class="card">
+                <div class="label info-box-header mb-10">Patient Personal Information</div>
+                <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                    <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">First Name</div>
+                    <div class = "label" style="display: flex; justify-content: flex-start;">Last Name</div>
+                    <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientFirstName"  class="w-full"/>
+                    <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientLastName"  class="w-full"/>
+                </div>
+        
+                <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                    <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Marital Status</div>
+                    <div class = "label" style="display: flex; justify-content: flex-start;">Gender</div>
+                    <p-select  [options]="maritalStatusOptions"  optionLabel="label" optionValue="value" [(ngModel)]="patientPersonaleInformation.patientMaritalStatus" class="w-full" />
+                    <p-select  [options]="genderOptions"   optionLabel="label" optionValue="value"  [(ngModel)]="patientPersonaleInformation.patientGender" class="w-full" />
+                </div>
+    
+            <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Date Of Birth</div>
+                <div class = "label" style="display: flex; justify-content: flex-start;">Age</div>
+                <p-datepicker styleClass="full-width-datepicker"  dateFormat="dd-mm-yy" [(ngModel)]="patientPersonaleInformation.patientDOB"></p-datepicker>
+                <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientAge"  class="w-full"/>
+            </div>
+    
+            <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Phone Number</div>
+                <div class = "label" style="display: flex; justify-content: flex-start;">Email</div>
+                <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientPhone"  class="w-full"/>
+                <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientEmail"  class="w-full"/>
+            </div>
+    
+            <div style="display: grid;grid-template-columns: repeat(1, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Address</div>
+            
+                <input type="text" pInputText [(ngModel)]="patientPersonaleInformation.patientAddress"  class="w-full"/>
+            </div>
+        </div>
+    
+        <!-- MIDDLE CARD -->
+        
+    
+    
+        <!-- RIGHT CARD -->
+        <div class=" card">
+            <div class="label info-box-header mb-10">Patient Clinical Information </div>
+            <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Blood Group</div>
+                <div class = "label" style="display: flex; justify-content: flex-start;">Case Type</div>
+                <p-select [options]="bloodGroupOptions"   optionLabel="label" optionValue="value"  [(ngModel)]="clinicalInformation.bloodGroup"class="w-full" />
+                <p-select [options]="caseTypeOptions"   optionLabel="label" optionValue="value" class="w-full" [(ngModel)]="clinicalInformation.caseType" class="w-full"/>
+            </div>
+            <div style="display: grid;grid-template-columns: repeat(2, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Ward</div>
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Assigned Doctor</div>
+                <p-select [options]="wardsOptions"   optionLabel="label" optionValue="value" class="w-full" [(ngModel)]="clinicalInformation.ward"  />
+                <p-select [options]="caseTypeOptions"   optionLabel="label" optionValue="value" class="w-full" [(ngModel)]="clinicalInformation.assignedDoctor" />
+            </div>
+    
+        
+            
+    
+            <div class="mb-10" style="display: grid;grid-template-columns: repeat(1, 1fr);  column-gap: 20px;">
+                <div class = "label" style="display: flex; justify-content: flex-start; margin-bottom: 5px;">Allergies</div>
+            
+                <p-select  [options]="wardsOptions"   optionLabel="label" optionValue="value" [(ngModel)]="clinicalInformation.allergies" class="w-full" />
+            </div> 
+        </div>
+    
+    
+     </div>
+     <div class="col-8 flex-col gap-20 mb-20" >
+        <div class="card" style="height: 100%;">
+            <p-table #dt [value]="customers" dataKey="id" [globalFilterFields]="['name', 'country', 'status']" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template #header>
+                    <tr>
+                        <th style="width: 25%">Patient MRN</th>
+                        <th style="width: 20%">Name</th>
+                        <th style="width: 20%">Status</th>
+                        <th style="width: 20%">Case Type</th>
+                        <th style="width: 15%">Gender</th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <p-column-filter type="text" field="name" [showMenu]="false" filterOn="input" [pt]="{ columnFilterFormElement: { class: 'p-fluid' } }">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <input pInputText pSize="small" type="text" [value]="value || ''" (input)="filter($event.target.value)" placeholder="Search MRN..." />
+                                </ng-template>
+                            </p-column-filter>
+                        </th>
+                        <th>
+                            <p-column-filter type="text" field="country" [showMenu]="false" filterOn="input" [pt]="{ columnFilterFormElement: { class: 'p-fluid' } }">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <input pInputText pSize="small" type="text" [value]="value || ''" (input)="filter($event.target.value)" placeholder="Search Name..." />
+                                </ng-template>
+                            </p-column-filter>
+                        </th>
+                        <th>
+                            <p-column-filter field="status" matchMode="equals" [showMenu]="false">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <p-select [ngModel]="value" [options]="caseTypeOptions" (onChange)="filter($event.value || null)" placeholder="Any" optionLabel="label" optionValue="value" size="small" style="min-width: 12rem" appendTo="body">
+                                    </p-select>
+                                </ng-template>
+                            </p-column-filter>
+                        </th>
+                        <th>
+                            <p-column-filter field="status" matchMode="equals" [showMenu]="false">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <p-select [ngModel]="value" [options]="wardsOptions" (onChange)="filter($event.value || null)" placeholder="Any" optionLabel="label" optionValue="value" size="small" style="min-width: 12rem" appendTo="body">
+                                    </p-select>
+                                </ng-template>
+                            </p-column-filter>
+                        </th>
+                        <th>
+                            <p-column-filter field="status" matchMode="equals" [showMenu]="false">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <p-select [ngModel]="value" [options]="genderOptions" (onChange)="filter($event.value || null)" placeholder="Any" optionLabel="label" optionValue="value" size="small" style="min-width: 12rem" appendTo="body">
+                                    </p-select>
+                                </ng-template>
+                            </p-column-filter>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-customer>
+                    <tr>
+                        <td>
+                            <span class="font-medium">{{ customer.name }}</span>
+                        </td>
+                        <td>
+                            {{ customer.country }}
+                        </td>
+                        <td>
+                            <p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" />
+                        </td>
+                        <td>
+                            <span class="font-semibold">{{ '$' + customer.balance.toLocaleString() }}</span>
+                        </td>
+                        <td>
+                            @if (customer.verified) {
+                                <p-tag value="Verified" severity="success" />
+                            } @else {
+                                <p-tag value="—" severity="secondary" />
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template #emptymessage>
+                    <div class ="col-12" style="display: flex; justify-content: center;">No data found on given search criteria.</div>
+                </ng-template>
+            </p-table>
+        </div>
+     </div>
+</div>
+
+    <div class="col-4">
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <p-button label="Cancel" severity="danger" />
+            <p-button label="Search" severity="info" (click)="patientRegistarionProcess()" />
+        </div>
+    </div>

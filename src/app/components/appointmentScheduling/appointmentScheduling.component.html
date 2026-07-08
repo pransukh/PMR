@@ -1,0 +1,123 @@
+<div class="col-12" style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 20px;">
+    <div style="display: flex; flex-direction: row; gap: 15px; align-items: center;">
+        <h2 style="font-size: 20px;">Schedule Appointment</h2>
+    </div>
+    <div style="display:flex; gap:5px; align-items: center; padding: 10px;">
+        <p-button label="Back To Appointment List" severity="info" (click)="backToAppointmentList()" />
+    </div>
+</div>
+
+<div class="col-12" style="display: flex;flex-direction: row; column-gap: 20px;">
+    <div class="col-4"
+        style="display: flex; flex-direction: column; row-gap: 20px; padding: 15px 15px 15px 15px; border: 1px solid #e3e7ee; background-color: white;border-radius: 12px;">
+        <div>
+            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Patient Name</div>
+            <div class="flex flex-wrap justify-center items-end gap-4">
+                <p-floatlabel class="w-full md:w-56">
+                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
+                        class="w-full" />
+                </p-floatlabel>
+            </div>
+        </div>
+
+        <div>
+            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Department</div>
+            <div class="flex flex-wrap justify-center items-end gap-4">
+                <p-floatlabel class="w-full md:w-56">
+                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
+                        class="w-full" />
+                </p-floatlabel>
+            </div>
+        </div>
+
+        <div>
+            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Doctor</div>
+            <div class="flex flex-wrap justify-center items-end gap-4">
+                <p-floatlabel class="w-full md:w-56">
+                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
+                        class="w-full" />
+                </p-floatlabel>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 8px;">
+                <div>
+                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Date</div>
+                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
+                        <div class="">
+                            <p-datepicker inputId="calendar-12h" [(ngModel)]="date" fluid />
+                        </div>
+
+                    </div>
+                </div>
+                <div>
+                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Time</div>
+                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
+                        <div class="">
+                            <p-datepicker inputId="calendar-12h" [(ngModel)]="date" [timeOnly]="true" fluid />
+                        </div>
+
+                    </div>
+                </div>
+                <div>
+                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">AM / PM</div>
+                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
+                        <p-select [(ngModel)]="value1" inputId="over_label" [options]="['AM','PM']" optionLabel="name"
+                            class="w-full" fluid />
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div style="margin-top: 10px;">
+            <p-floatlabel>
+                <textarea pTextarea id="description" rows="5" style="resize: none" fluid></textarea>
+                <label for="description">Description</label>
+            </p-floatlabel>
+        </div>
+
+
+        <div class="col-12" style="display: flex; flex-direction: row; justify-content: right;">
+            <div style="display: flex; flex-direction: row; gap: 15px; align-items: center;">
+                <p-button label="Cancel" severity="warn" (click)="backToAppointmentList()" />
+            </div>
+            <div style="display:flex; gap:5px; align-items: center; padding: 10px;">
+                <p-button label="Schedule" severity="info" (click)="backToAppointmentList()" />
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-8"
+        style=" row-gap: 20px; padding: 15px 15px 15px 15px; border: 1px solid #e3e7ee; background-color: white;border-radius: 12px; height: auto;">
+        <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Available Doctors</div>
+        <div class="col-12" style="display: flex;flex-direction: row;">
+            <div class="col-2"
+                style="display: flex;flex-direction: column; padding: 10px; align-items: center; background-color: red;">
+                <div style="height: 140px; width: 140px; background-color: green">Image</div>
+                <div>Name</div>
+                <div>Department</div>
+            </div>
+            <div class="col-10" >
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 5px; grid-row: max;">
+                    <div class="apmntWeekDay disabled">Mon</div>
+                    <div class="apmntWeekDay">Tue</div>
+                    <div class="apmntWeekDay">Wed</div>
+                    <div class="apmntWeekDay ">Thu</div>
+                    <div class="apmntWeekDay">Fri</div>
+                    <div class="apmntWeekDay disabled">Sat</div>
+                    <div class="apmntWeekDay disabled">Sun</div>
+                    <div> </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

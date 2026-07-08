@@ -1,0 +1,271 @@
+<div class="col-12 flex-row space-between mb-20">
+    <div class="flex-row gap-15 align-center">
+        <h2 class="title">Patient Registration</h2>
+    </div>
+</div>
+
+<form [formGroup]="patientForm">
+
+    <div class="col-12 flex-row gap-20 mb-20">
+    
+        <!-- LEFT CARD -->
+        <div class="col-4 card" formGroupName="personalInfo">
+            <div class="label info-box-header mb-10">Patient Personal Information</div>
+    
+            <!-- First + Last Name -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">First Name</div>
+                <div class="label">Last Name</div>
+    
+                <input type="text" pInputText formControlName="patientFirstName"
+                    [invalid]="isInvalid('personalInfo.patientFirstName')" class="w-full"/>
+    
+                <input type="text" pInputText formControlName="patientLastName" class="w-full"/>
+    
+               
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr);">
+                <small class="p-error" *ngIf="isInvalid('personalInfo.patientFirstName')">
+                    First Name is required.
+                </small>
+            </div>
+            <!-- DOB + Age -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Date of Birth</div>
+                <div class="label">Age</div>
+
+                <p-datepicker formControlName="patientDOB" styleClass="full-width-datepicker"
+                    [invalid]="isInvalid('personalInfo.patientDOB')"
+                    dateFormat="dd-mm-yy"></p-datepicker>
+
+                <input type="text" pInputText formControlName="patientAge"
+                    [invalid]="isInvalid('personalInfo.patientAge')" class="w-full"/>
+
+                
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); grid-template-areas: 1fr 1fr;">
+                <small class="p-error" *ngIf="isInvalid('personalInfo.patientDOB')">
+                    Date of Birth is required.
+                </small>
+
+                <small class="p-error" *ngIf="isInvalid('personalInfo.patientAge')">
+                    Age is required.
+                </small>
+            </div>
+            <!-- Marital + Gender -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Marital Status</div>
+                <div class="label">Gender</div>
+    
+                <p-select [options]="maritalStatusOptions" optionLabel="label" optionValue="value"
+                    formControlName="patientMaritalStatus"
+                    class="w-full"></p-select>
+    
+                <p-select [options]="genderOptions" optionLabel="label" optionValue="value"
+                    formControlName="patientGender"
+                    [invalid]="isInvalid('personalInfo.patientGender')" class="w-full"></p-select>
+    
+                
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); column-gap: 20px; justify-items: flex-start;">
+                <small></small>
+                <small class="p-error" *ngIf="isInvalid('personalInfo.patientGender')">
+                    Gender is required.
+                </small>
+            </div>
+    
+           
+    
+            <!-- Phone + Email -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Phone Number</div>
+                <div class="label">Email</div>
+    
+                <input type="text" pInputText formControlName="patientPhone"
+                     class="w-full"/>
+    
+                <input type="text" pInputText formControlName="patientEmail"
+                     class="w-full"/>
+    
+                
+            </div>
+    
+            <!-- Address -->
+            <div style="display:grid;grid-template-columns:repeat(1,1fr);">
+                <div class="label">Address</div>
+    
+                <input type="text" pInputText formControlName="patientAddress"
+                    [invalid]="isInvalid('personalInfo.patientAddress')" class="w-full"/>
+    
+                <small class="p-error" *ngIf="isInvalid('personalInfo.patientAddress')">
+                    Address is required.
+                </small>
+            </div>
+        </div>
+    
+        <!-- MIDDLE CARD -->
+        <div class="col-4 card" formGroupName="emergencyContactInfo">
+            <div class="label info-box-header mb-10">Emergency Contact</div>
+    
+            <!-- Name -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">First Name</div>
+                <div class="label">Last Name</div>
+    
+                <input type="text" pInputText formControlName="ecFirstName"
+                    [invalid]="isInvalid('emergencyContactInfo.ecFirstName')" class="w-full"/>
+    
+                <input type="text" pInputText formControlName="ecLastName"
+                     class="w-full"/>
+    
+                <small class="p-error" *ngIf="isInvalid('emergencyContactInfo.ecFirstName')">
+                    First Name is required.
+                </small>
+    
+               
+            </div>
+    
+            <!-- Relation -->
+            <div style="display:grid;grid-template-columns:repeat(1,1fr);">
+                <div class="label">Relation</div>
+    
+                <p-select [options]="relationOptions"
+                    formControlName="ecRelation"
+                    optionLabel="label"
+                    optionValue="value"
+                    [invalid]="isInvalid('emergencyContactInfo.ecRelation')"
+                    class="w-full"></p-select>
+    
+                <small class="p-error" *ngIf="isInvalid('emergencyContactInfo.ecRelation')">
+                    Relation is required.
+                </small>
+            </div>
+    
+            <!-- Phone + Email -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Phone</div>
+                <div class="label">Email</div>
+    
+                <input type="text" pInputText formControlName="ecPhoneNumber"
+                    [invalid]="isInvalid('emergencyContactInfo.ecPhoneNumber')" class="w-full"/>
+    
+                <input type="text" pInputText formControlName="ecEmail"
+                     class="w-full"/>
+    
+                <small class="p-error" *ngIf="isInvalid('emergencyContactInfo.ecPhoneNumber')">
+                    Phone is required.
+                </small>
+    
+                
+            </div>
+    
+            <!-- Address -->
+            <div style="display:grid;grid-template-columns:repeat(1,1fr);">
+                <div class="label">Address</div>
+    
+                <input type="text" pInputText formControlName="ecAddress"
+                    [invalid]="isInvalid('emergencyContactInfo.ecAddress')" class="w-full"/>
+    
+                <small class="p-error" *ngIf="isInvalid('emergencyContactInfo.ecAddress')">
+                    Address is required.
+                </small>
+            </div>
+        </div>
+    
+        <!-- RIGHT CARD -->
+        <div class="col-4 card" formGroupName="clinicalInfo">
+            <div class="label info-box-header mb-10">Clinical Information</div>
+    
+            <!-- Blood + Case -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Blood Group</div>
+                <div class="label">Case Type</div>
+    
+                <p-select [options]="bloodGroupOptions"
+                    formControlName="bloodGroup"
+                    optionLabel="label"
+                    optionValue="value"
+                   
+                    class="w-full"></p-select>
+    
+                <p-select [options]="caseTypeOptions"
+                    formControlName="caseType"
+                    optionLabel="label"
+                    optionValue="value"
+                    [invalid]="isInvalid('clinicalInfo.caseType')"
+                    class="w-full"></p-select>   
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2,1fr); column-gap: 20px; justify-items: flex-start;">
+                <small></small>
+                <small class="p-error" *ngIf="isInvalid('clinicalInfo.caseType')">
+                   Case type is required.
+                </small>
+            </div>
+    
+            <!-- Ward + Doctor -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;">
+                <div class="label">Ward</div>
+                <div class="label">Assigned Doctor</div>
+    
+                <p-select [options]="wardsOptions"
+                    formControlName="ward"
+                    optionLabel="label"
+                    optionValue="value"
+                    [invalid]="isInvalid('clinicalInfo.ward')"
+                    class="w-full"></p-select>
+    
+                <p-select [options]="assinedDoctorOptions"
+                    formControlName="assignedDoctor"
+                    optionLabel="label"
+                    optionValue="value"
+                   
+                    class="w-full"></p-select>
+    
+                <small class="p-error" *ngIf="isInvalid('clinicalInfo.ward')">
+                    Ward is required.
+                </small>
+    
+                
+            </div>
+    
+            <!-- Allergies -->
+            <div style="display:grid;grid-template-columns:repeat(1,1fr);">
+                <div class="label">Allergies</div>
+    
+                <p-select [options]="allergiesOptions"
+                    formControlName="allergies"
+                    optionLabel="label"
+                    optionValue="value"
+                    [invalid]="isInvalid('clinicalInfo.allergies')"
+                    class="w-full"></p-select>
+    
+                <small class="p-error" *ngIf="isInvalid('clinicalInfo.allergies')">
+                    Allergies is required.
+                </small>
+            </div>
+    
+            <!-- Notes -->
+            <div>
+                <textarea pTextarea rows="5"
+                    formControlName="diagnosisNotes"
+                    [class.ng-invalid]="isInvalid('clinicalInfo.diagnosisNotes')"
+                    style="width:100%;resize:none"></textarea>
+    
+                <small class="p-error" *ngIf="isInvalid('clinicalInfo.diagnosisNotes')">
+                    Diagnosis Notes is required.
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BUTTONS -->
+    <div class="col-12">
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <p-button label="Cancel" severity="danger" (click)="confirmCancel($event)"></p-button>
+            <p-button label="Register" severity="info"
+                (click)="patientRegistarionProcess()"></p-button>
+        </div>
+    </div>
+    <p-confirmdialog />
+    <p-toast />
+    </form>

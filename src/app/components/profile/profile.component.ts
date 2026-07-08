@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import keycloak from '../app-config/keycloak';
+import { Router } from '@angular/router';
+import keycloak from '../../app-config/keycloak';
 
 @Component({
   selector: 'app-profile',
@@ -9,11 +10,17 @@ import keycloak from '../app-config/keycloak';
 })
 export class ProfileComponent {
 
+  constructor(private router: Router) {}
+  
   user: any = keycloak.tokenParsed ?? {};
 
   logout() {
     keycloak.logout({
       redirectUri: window.location.origin
     });
+  }
+
+  patientSearch(){
+    this.router.navigate(['/patient-search']);
   }
 }

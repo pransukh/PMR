@@ -1,0 +1,24 @@
+<div class="header-container" >
+    <div class="logo"></div>
+    <div class="profileSection">
+        <div class="profileImage" type="button" pButton (click)="popover.toggle($event)">J</div>
+        <div class="flex directionColumn">
+            <span class="userName">Jagdeep Singh</span>
+            <span class="userRole">Admin</span>
+        </div>
+    </div> 
+</div>
+<p-popover #popover styleClass="">
+            <div class="profilePopOver">
+                <div class="settingAndNotification">
+                    <div>⚙️</div>
+                    <p-divider layout="vertical"  styleClass="dividerWidth" />
+                    <div>🔔</div>
+                </div>
+                <div class="profilePopOverSection">
+                    <div class="profileImage profilePicInPopOver">J</div>
+                    <div></div>
+                    <p-button styleClass="logOutButton" label="Sign Out" severity="danger" />
+                </div>
+            </div>
+</p-popover>

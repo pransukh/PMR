@@ -1,0 +1,13 @@
+.apmntWeekDay {
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #111827;
+    color: white;
+    min-height: 30px;
+    align-items: center;
+}
+
+.apmntWeekDay.disabled {
+    background-color: #a3a4a6;
+}

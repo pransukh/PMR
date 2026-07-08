@@ -1,1 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+:root{
+  --textColor: green;
+  
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .logOutButton {
+    border-radius: 100px !important;
+    border : 0px solid red;
+    filter: none;
+  }
+
+  .dividerWidth::before {
+    border-left: 1px solid #73B7CF !important;
+}
+
+.full-width-datepicker{
+  width: 100%;
+  display: block;
+}
+
+.full-width-datepicker .p-inputtext {
+  width: 100%;
+}

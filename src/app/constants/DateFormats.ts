@@ -1,0 +1,4 @@
+export enum DATE_FORMAT {
+    DD_MM_YYYY = 'DD-MM-YYYY',
+    DD_SLASH_MM_SLASH_YYYY = 'DD/MM/YYYY',
+}

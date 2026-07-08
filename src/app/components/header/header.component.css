@@ -1,0 +1,100 @@
+.flex {
+    display: flex;
+}
+
+.directionColumn {
+    flex-direction: column;
+}
+
+.directionRow {
+    flex-direction: row;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    background: linear-gradient(90deg, #ffffff, #3497b9);
+    justify-content: space-between;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.profileSection {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    padding: 0px 5px 0px 5px;
+    justify-items: center;
+}
+
+.profileImage {
+    display: flex;
+    height: 100%;
+    width: 50px;
+    background-color: #4141e4;
+    border-radius: 100px;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.userName {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.userRole {
+    font-size: 14px;
+    color: white;
+}
+
+.profilePopOver {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 200px;
+    width: 500px;
+    grid-template-rows: 100px 100px;
+
+    row-gap: 5px;
+}
+
+.profileImage.profilePicInPopOver {
+    height: 50px;
+    width: 50px;
+}
+
+.profilePopOverSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    padding: 15px;
+ 
+}
+
+.settingAndNotification {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 5px;
+    align-items: center;
+    justify-items: center;
+    font-size: 50px;
+    border-bottom: 1px solid #73B7CF;
+
+}

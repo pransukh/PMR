@@ -1,0 +1,267 @@
+<div class="grid grid-nogutter">
+
+    <div class="col-12" style="display: flex; flex-direction: row; justify-content: space-between; height: 65px;">
+        <div class="col-6" style="display: flex; align-items: center;">
+            <h2 style="font-family: Inter, -apple-system, BlinkMacSystemFont,Segoe UI,sans-serif; font-size: 20px;">
+                Dashborad</h2>
+        </div>
+        <div class="col-6"
+            style="display: flex; flex-direction: row; justify-content: right; gap: 5px; align-items: center;">
+            <p-button label="+ Admit/Register Patient" (click)="patientRegistration()" />
+            <p-button label="Discharge" severity="danger" />
+
+        </div>
+    </div>
+
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; width:100%; margin-bottom: 40px;">
+
+    <div
+        style="display:flex; gap:20px; background:#fff; border-radius:10px; padding:18px 20px; border:1px solid #e3e7ee;">
+        <div
+            style="display: flex; height: 40px; width: 40px; background-color: rgb(233, 223, 223);; border-radius: 5px; align-items: center; justify-content: center;">
+            <span style="font-size: 30px;">🔢</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 22px; font-weight: 700; line-height: 1.2;">40</span>
+            <span style="font-size: 15px; font-weight: bold; color: #667085 ;">Total Patient</span>
+        </div>
+    </div>
+    <div
+        style="display:flex; gap:20px; background:#fff; border-radius:10px; padding:18px 20px; border:1px solid #e3e7ee;">
+        <div
+            style="display: flex; height: 40px; width: 40px; background-color: rgb(233, 223, 223);; border-radius: 5px; align-items: center; justify-content: center;">
+            <span style="font-size: 30px;">📈</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 22px; font-weight: 700; line-height: 1.2;">3</span>
+            <span style="font-size: 15px; font-weight: bold; color: #667085 ;">ICU</span>
+        </div>
+    </div>
+    <div
+        style="display:flex; gap:20px; background:#fff; border-radius:10px; padding:18px 20px; border:1px solid #e3e7ee;">
+        <div
+            style="display: flex; height: 40px; width: 40px; background-color: rgb(233, 223, 223);; border-radius: 5px; align-items: center; justify-content: center;">
+            <span style="font-size: 30px;">🚨</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 22px; font-weight: 700; line-height: 1.2;">7</span>
+            <span style="font-size: 15px; font-weight: bold; color: #667085 ;">Emergency</span>
+        </div>
+    </div>
+    <div
+        style="display:flex; gap:20px; background:#fff; border-radius:10px; padding:18px 20px; border:1px solid #e3e7ee;">
+        <div
+            style="display: flex; height: 40px; width: 40px; background-color: rgb(233, 223, 223);; border-radius: 5px; align-items: center; justify-content: center;">
+            <span style="font-size: 30px;">🥼</span>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 22px; font-weight: 700; line-height: 1.2;">4</span>
+            <span style="font-size: 15px; font-weight: bold; color: #667085 ;">Under Surgery</span>
+        </div>
+    </div>
+</div>
+
+<!-- -->
+<div class="col-12" style="display: flex; flex-direction: row; gap: 15px">
+    <div class="col-8 appointment-card">
+        <div class="appointment-header">
+            <span style="font-weight: bold; font-size: 15px;">Recent Patients</span>
+            <span style="font-weight: bold; color: #2563EB; font-size: 15px; cursor: pointer;">View all</span>
+        </div>
+        <div class="appointment-list">
+
+            <div class="card">
+                <!-- <div class="mb-4 flex gap-1">
+                    <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" text />
+                    <p-button type="button" icon="pi pi-refresh" (click)="reset()" text />
+                    <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" text />
+                </div> -->
+                <p-table [value]="pagedCustomers" stripedRows [paginator]="false" [rows]="rows"
+                [tableStyle]="{ 'min-width': '50rem' }" [first]="first"
+                [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                    <ng-template #header>
+                        <tr>
+                            <th style="width:25%">Name</th>
+                            <th style="width:25%">Age</th>
+                            <th style="width:25%">Status</th>
+                            <th style="width:25%">Doctor</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-customer>
+                        <tr>
+                            <td>{{ customer.name }}</td>
+                            <td>{{customer.age}}</td>
+                            <td>
+                                <p-tag *ngIf="customer.status?.toLowerCase() === 'discharged'" value="Discharged"
+                                    severity="danger">
+                                </p-tag>
+                                <p-tag *ngIf="customer.status?.toLowerCase() === 'admitted'" value="Admitted"
+                                    severity="contrast">
+                                </p-tag>
+                                <p-tag *ngIf="customer.status?.toLowerCase() === 'outpatient'" value="OutPatient"
+                                    severity="info">
+                                </p-tag>
+                            </td>
+                            <td>{{ customer.doctor }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <div class="col-12" style="display: flex; justify-content: right;">
+            <p-paginator
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="customers.length"
+    [rowsPerPageOptions]="[5,10,20,30]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+    (onPageChange)="onPageChange($event)">
+</p-paginator>
+        </div>
+    </div>
+    <!-- style="background-color: #fff; border:1px solid #e3e7ee; border-radius: 15px; padding: 20px; max-height:600px;
+    overflow-y:auto;" -->
+    <div class="col-4 appointment-card">
+        <div class="appointment-header" >
+            <span style="font-weight: bold; font-size: 15px;">Upcoming Appointments</span>
+            <span style="font-weight: bold; color: #2563EB; font-size: 15px; cursor: pointer;">View all</span>
+        </div>
+        <div class="appointment-list">
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Deepak Nayar - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Shami Gupta</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="Today" style="background-color: red; color: white"></p-tag> (12-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+    
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Shami Gupta - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Abdul Akbari Rehman</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="Tomorrow" style="background-color: green; color: white"></p-tag> (13-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+            
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Mugad Kondal - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Harvinder Singh Athwal</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="This Week" severity="contrast"></p-tag> (15-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+    
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Gurpreet Kaur - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Amit Arora</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="This Week" severity="contrast"></p-tag> (16-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+    
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Sumit - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Shami Gupta</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="This Week" severity="contrast"></p-tag> (17-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+    
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Swati Nayar - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Kamaldeep Singh</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="Next Week" style="background-color: blue; color: white;"></p-tag> (20-Jan-2025) at 10:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+            <div class="col-12" style="display: flex; justify-content: space-between; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 15px; font-weight: bold; margin-bottom: 10px;"> Swati Nayar - <span  style="font-size: 12px; color: #667085">Regular Checkup</span></span>
+                <span style="font-size: 1rem; font-weight: 600; ">Dr. Kamaldeep Singh</span>
+            </div>
+            <div class="col-12" style="display: flex; flex-direction: row; padding: 0px 10px 0px 10px;">
+                <span style="font-size: 12px; color: green"> <p-tag value="Next Week" style="background-color: blue; color: white;"></p-tag> (20-Jan-2025) at 11:15 PM IST</span>
+            </div>
+           
+            <p-divider></p-divider>
+        </div>
+        
+       
+    </div>
+</div>
+
+<!-- Discharge schedule -->
+
+<div class="col-12" style="display: flex; flex-direction: row; gap: 15px; align-items:flex-start;">
+    <div class="col-8"
+        style="background-color: #fff; border:1px solid #e3e7ee; border-radius: 15px; height: auto; padding: 20px;">
+        <div class="col-12" style="display: flex; justify-content: space-between;">
+            <span style="font-weight: bold; font-size: 15px;">Scheduled <p-tag value="Discharges"
+                severity="danger">
+            </p-tag></span>
+            <span style="font-weight: bold; color: #2563EB; font-size: 15px; cursor: pointer;">View all</span>
+        </div>
+        <div class="card">
+            <div class="mb-4 flex gap-1">
+                <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" text />
+                <p-button type="button" icon="pi pi-refresh" (click)="reset()" text />
+                <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" text />
+            </div>
+            <p-table [value]="customers" stripedRows [paginator]="true" [rows]="rows"
+                [tableStyle]="{ 'min-width': '50rem' }" [first]="first" (onPage)="pageChange($event)"
+                [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                <ng-template #header>
+                    <tr>
+                        <th style="width:25%">Name</th>
+                        <th style="width:25%">Age</th>
+                        <th style="width:25%">Status</th>
+                        <th style="width:25%">Doctor</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-customer>
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.status }}</td>
+                        <td>
+                            <p-tag *ngIf="customer.status?.toLowerCase() === 'discharged'" value="Discharged"
+                                severity="success">
+                            </p-tag>
+                            <p-tag *ngIf="customer.status?.toLowerCase() === 'admitted'" value="Admitted"
+                                severity="contrast">
+                            </p-tag>
+                            <p-tag *ngIf="customer.status?.toLowerCase() === 'outpatient'" value="OutPatient"
+                                severity="info">
+                            </p-tag>
+                        </td>
+                        <td>{{ customer.doctor }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="col-4"
+        style="background-color: #fff; border:1px solid #e3e7ee; border-radius: 15px; height: auto; padding: 20px;">
+        <div class="col-12" style="display: flex; justify-content: space-between;">
+            <span style="font-weight: bold; font-size: 15px;">Patients In <p-tag value="ICU"
+                severity="danger">
+            </p-tag></span>
+            <span style="font-weight: bold; color: #2563EB; font-size: 15px; cursor: pointer;">View all</span>
+        </div>
+    </div>
+</div>

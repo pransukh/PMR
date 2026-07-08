@@ -1,0 +1,68 @@
+<div class="grid grid-cols-3 gap-4"></div>
+<div class="card flex flex-wrap justify-content-center align-items-end gap-4"
+    style="margin-top: 60px; margin-bottom: 20px;">
+    <p-floatlabel>
+        <input pInputText id="patient_search_mrn_field" [(ngModel)]="patientSearchModel.mrn" autocomplete="off" />
+        <label for="patient_search_mrn_field">Patient MRN </label>
+    </p-floatlabel>
+    <p-floatlabel>
+        <input pInputText id="patient_search_name_field" [(ngModel)]="patientSearchModel.name" autocomplete="off" />
+        <label for="patient_search_name_field">Patient Name</label>
+    </p-floatlabel>
+    <p-floatlabel class="w-56 block">
+        <p-select
+        variant="filled"
+            class="w-full"
+            [options]="gender"
+            [(ngModel)]="patientSearchModel.gender"
+            optionLabel="displayValue"
+            placeholder="Select Gender">
+        </p-select>
+    </p-floatlabel>
+    <p-floatlabel class="w-56 block">
+        <p-select
+        variant="filled"
+            class="w-full"
+            [options]="relation"
+            [(ngModel)]="patientSearchModel.relation"
+            optionLabel="relationCode"
+            placeholder="Select Relation">
+        </p-select>
+    </p-floatlabel>
+    <p-floatlabel class="w-56 block">
+        <p-select
+        variant="filled"
+            class="w-full"
+            [options]="maritalStatus"
+            [(ngModel)]="patientSearchModel.maritalStatus"
+            optionLabel="status"
+            placeholder="Select Marital Status">
+        </p-select>
+    </p-floatlabel>
+    <p-floatlabel class="w-56 block">
+        <p-select
+            class="w-full"
+            [options]="ageRange"
+            [(ngModel)]="patientSearchModel.age"
+            optionLabel="displayRange"
+            placeholder="Select Age">
+        </p-select>
+    </p-floatlabel>
+    <p-floatlabel>
+        <input pInputText id="patient_search_relative_field" [(ngModel)]="patientSearchModel.relativeName" autocomplete="off" />
+        <label for="patient_search_relative_field">Relative Name</label>
+    </p-floatlabel>
+    <p-floatlabel>
+        <input pInputText id="patient_search_phone_field" [(ngModel)]="patientSearchModel.phone" autocomplete="off" />
+        <label for="patient_search_phone_field">Patient Phone</label>
+    </p-floatlabel>
+    <div class="card flex justify-center">
+        <p-button label="Search" icon="pi pi-search" iconPos="left" [loading]="loading()" (onClick)="searchPatient()" />
+    </div>
+    <p-toast />
+    <!-- <div class="card flex justify-center">
+        <p-toast />
+        <p-splitButton label="Save" icon="pi pi-check" dropdownIcon="pi pi-cog" [model]="items" />
+    </div> -->
+</div>
+<ht-patientDetailsWithoutNav [patientDetailPassed]="patientDetails"></ht-patientDetailsWithoutNav>

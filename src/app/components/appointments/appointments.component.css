@@ -1,0 +1,13 @@
+.container {
+    min-height: 800px;
+    border: 8px solid black;
+    display: flex;
+    justify-content: row-reverse;
+}
+
+.box {
+    height: 200px;
+    width: 200px;
+    background-color: red;
+    font-size: 40pt;
+}

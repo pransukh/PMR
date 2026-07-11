@@ -1,7 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { Button } from "primeng/button";
 import { Popover, PopoverModule } from 'primeng/popover';
 import { DividerModule } from 'primeng/divider';
+import { SidebarToggleService } from "../../services/sidebarToggle.service";
 
 @Component({
     standalone: true,
@@ -12,8 +13,8 @@ import { DividerModule } from 'primeng/divider';
 })
 
 
-class Header{
-
+class Header {
+    protected sidebarService = inject(SidebarToggleService);
 }
 
 export default Header;

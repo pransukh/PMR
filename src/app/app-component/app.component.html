@@ -1,6 +1,7 @@
 <div class="app-layout">
 
     <!-- SIDEBAR -->
+    @if (sidebarService.isSidebarOpen()) {
     <aside class="sidebar">
 
         <div class="sidebar-header">
@@ -9,10 +10,13 @@
 
         <nav class="sidebar-nav">
 
-            <a routerLink="/dashboard" routerLinkActive="active"><span style="margin-right: 10px;">📊</span>Dashboard</a>
-            <a routerLink="/appointments" routerLinkActive="active"><span style="margin-right: 10px;">🗓️</span>Appointments</a>
+            <a routerLink="/dashboard" routerLinkActive="active"><span
+                    style="margin-right: 10px;">📊</span>Dashboard</a>
+            <a routerLink="/appointments" routerLinkActive="active"><span
+                    style="margin-right: 10px;">🗓️</span>Appointments</a>
             <a routerLink="/users" routerLinkActive="active"><span style="margin-right: 10px;">🙋‍♂️</span>Users</a>
-            <a routerLink="/patients" routerLinkActive="active"><span style="margin-right: 10px; background-color: white; border-radius: 20px;">🦽</span>Patients</a>
+            <a routerLink="/patients" routerLinkActive="active"><span
+                    style="margin-right: 10px; background-color: white; border-radius: 20px;">🦽</span>Patients</a>
             <a routerLink="/reports" routerLinkActive="active"><span style="margin-right: 10px;">📜</span>Reports</a>
             <a routerLink="/settings" routerLinkActive="active"><span style="margin-right: 10px;">⚙️</span>Settings</a>
             <a routerLink="/logout" routerLinkActive="active"><span style="margin-right: 10px;">📴</span>Logout</a>
@@ -25,6 +29,7 @@
         </div>
 
     </aside>
+    }
 
     <!-- MAIN -->
     <main class="main">

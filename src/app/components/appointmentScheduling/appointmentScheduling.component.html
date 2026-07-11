@@ -7,10 +7,10 @@
     </div>
 </div>
 
-<div class="col-12" style="display: flex;flex-direction: row; column-gap: 20px;">
-    <div class="col-4"
-        style="display: flex; flex-direction: column; row-gap: 20px; padding: 15px 15px 15px 15px; border: 1px solid #e3e7ee; background-color: white;border-radius: 12px;">
-        <div>
+<div class="grid">
+    <div class="col-4">
+        <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
+            <div>
             <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Patient Name</div>
             <div class="flex flex-wrap justify-center items-end gap-4">
                 <p-floatlabel class="w-full md:w-56">
@@ -87,16 +87,16 @@
                 <p-button label="Schedule" severity="info" (click)="backToAppointmentList()" />
             </div>
         </div>
+        </div>
 
     </div>
 
 
-    <div class="col-8"
-        style=" row-gap: 20px; padding: 15px 15px 15px 15px; border: 1px solid #e3e7ee; background-color: white;border-radius: 12px; height: auto;">
-        <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Available Doctors</div>
-        <div class="col-12" style="display: flex;flex-direction: row;">
-            <div class="col-2"
-                style="display: flex;flex-direction: column; padding: 5px; align-items: center; gap:5px;height:100px" class="w-12 shadow-2 border-round-md">
+    <div class="col-8">
+        <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
+            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Available Doctors</div>
+        <div class="col-12 shadow-1 border-round-md p-3" style="display: flex;flex-direction: row;">
+            <div class="col-2 shadow-2 border-round-md flex flex-column p-1 justify-content-center align-items-center gap-2 h-8rem text-center overflow-hidden">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_MlO3koV2GayVLm8an7l8W_Y3syrPmJHZQ2tX_Ev8w&s=10" alt="" class="border-round-3xl w-3rem h-3rem bg-primary shadow-1">
                 <div class="text-xs">Dr. Demo</div>
                 <div class="text-xs">ENT</div>
@@ -235,9 +235,8 @@
                 
             </div>
         </div>
-        <div class="col-12" style="display: flex;flex-direction: row;">
-            <div class="col-2"
-                style="display: flex;flex-direction: column; padding: 5px; align-items: center; gap:5px;height:100px" class="w-12 shadow-2 border-round-md">
+        <div class="col-12 shadow-1 border-round-md p-3" style="display: flex;flex-direction: row;">
+            <div class="col-2 shadow-2 border-round-md flex flex-column p-1 justify-content-center align-items-center gap-2 h-8rem text-center overflow-hidden">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_MlO3koV2GayVLm8an7l8W_Y3syrPmJHZQ2tX_Ev8w&s=10" alt="" class="border-round-3xl w-3rem h-3rem bg-primary shadow-1">
                 <div class="text-xs">Dr. Demo2</div>
                 <div class="text-xs">ENT</div>
@@ -375,6 +374,7 @@
                 </div>
                 
             </div>
+        </div>
         </div>
 
 

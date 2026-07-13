@@ -8,14 +8,14 @@
 </div>
 
 <div class="grid">
-    <div class="col-4">
+    <div class="col-12">
         <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
             <div>
             <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Patient Name</div>
             <div class="flex flex-wrap justify-center items-end gap-4">
                 <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
-                        class="w-full" />
+                    <p-select [(ngModel)]="paitent" inputId="over_label" [options]="paitents" optionLabel="name"
+                        placeholder="Select Paitent" class="w-full" />
                 </p-floatlabel>
             </div>
         </div>
@@ -24,8 +24,7 @@
             <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Department</div>
             <div class="flex flex-wrap justify-center items-end gap-4">
                 <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
-                        class="w-full" />
+                    <p-select [(ngModel)]="department" (onChange)="onDepartmentChange()" inputId="over_label" [options]="departments" optionLabel="name" placeholder="Select Department" class="w-full" />
                 </p-floatlabel>
             </div>
         </div>
@@ -34,10 +33,30 @@
             <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Doctor</div>
             <div class="flex flex-wrap justify-center items-end gap-4">
                 <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="value1" inputId="over_label" [options]="cities" optionLabel="name"
+                    <p-select [(ngModel)]="doctor" inputId="over_label" [options]="filteredDoctors" [disabled]="!department || filteredDoctors.length === 0" placeholder="Select Doctor" optionLabel="name"
                         class="w-full" />
                 </p-floatlabel>
             </div>
+            @if(doctor){
+            <div class="col-12 shadow-1 mt-3 border-round-md" >
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); column-gap: 10px; row-gap:12px; grid-row: max;" class="overflow-x-auto">                     
+                    @for (day of doctor.slot[0] | keyvalue:sortDays; track day.key) {
+                        <div class="flex flex-column" [class.disabled]="!doctor.holidays[day.key]">
+                            <div class="apmntWeekDay">{{day.key | titlecase }}</div>
+                            <div class="overflow-x-auto ">
+                                <div class="h-10rem">
+                                @for (ts of day.value; track ts.start) { 
+                                    <div class="white-space-nowrap text-sm mt-2 mb-2 {{ !ts.isAvailable ? 'line-through' : '' }}">
+                                        {{ts.start}} - {{ts.end}}
+                                    </div>
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    }                    
+                </div>                
+            </div>
+            }
         </div>
 
         <div style="display: flex; flex-direction: column;">
@@ -63,7 +82,7 @@
                 <div>
                     <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">AM / PM</div>
                     <div style="display: flex;flex-direction: row; justify-content: space-between;">
-                        <p-select [(ngModel)]="value1" inputId="over_label" [options]="['AM','PM']" optionLabel="name"
+                        <p-select [(ngModel)]="timetable" inputId="over_label" [options]="['AM','PM']" 
                             class="w-full" fluid />
                     </div>
 
@@ -92,7 +111,7 @@
     </div>
 
 
-    <div class="col-8">
+    <!-- <div class="col-12">
         <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
             <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Available Doctors</div>
         <div class="col-12 shadow-1 border-round-md p-3" style="display: flex;flex-direction: row;">
@@ -378,6 +397,6 @@
         </div>
 
 
-    </div>
+    </div> -->
 
 </div>

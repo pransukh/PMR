@@ -11,3 +11,9 @@
 .apmntWeekDay.disabled {
     background-color: #a3a4a6;
 }
+.disabled {
+  opacity: 0.5;                 /* Grays out the div */
+  filter: grayscale(100%);      /* Makes colors muted */
+  pointer-events: none;         /* Disables all mouse clicks, hovers, and pointer events */
+  cursor: not-allowed;          /* Shows the 'block' cursor if pointer-events allows it */
+}

@@ -7,396 +7,175 @@
     </div>
 </div>
 
-<div class="grid">
-    <div class="col-12">
-        <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
-            <div>
-            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Patient Name</div>
-            <div class="flex flex-wrap justify-center items-end gap-4">
-                <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="paitent" inputId="over_label" [options]="paitents" optionLabel="name"
-                        placeholder="Select Paitent" class="w-full" />
-                </p-floatlabel>
-            </div>
-        </div>
-
-        <div>
-            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Department</div>
-            <div class="flex flex-wrap justify-center items-end gap-4">
-                <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="department" (onChange)="onDepartmentChange()" inputId="over_label" [options]="departments" optionLabel="name" placeholder="Select Department" class="w-full" />
-                </p-floatlabel>
-            </div>
-        </div>
-
-        <div>
-            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Doctor</div>
-            <div class="flex flex-wrap justify-center items-end gap-4">
-                <p-floatlabel class="w-full md:w-56">
-                    <p-select [(ngModel)]="doctor" inputId="over_label" [options]="filteredDoctors" [disabled]="!department || filteredDoctors.length === 0" placeholder="Select Doctor" optionLabel="name"
-                        class="w-full" />
-                </p-floatlabel>
-            </div>
-            @if(doctor){
-            <div class="col-12 shadow-1 mt-3 border-round-md" >
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); column-gap: 10px; row-gap:12px; grid-row: max;" class="overflow-x-auto">                     
-                    @for (day of doctor.slot[0] | keyvalue:sortDays; track day.key) {
-                        <div class="flex flex-column" [class.disabled]="!doctor.holidays[day.key]">
-                            <div class="apmntWeekDay">{{day.key | titlecase }}</div>
-                            <div class="overflow-x-auto ">
-                                <div class="h-10rem">
-                                @for (ts of day.value; track ts.start) { 
-                                    <div class="white-space-nowrap text-sm mt-2 mb-2 {{ !ts.isAvailable ? 'line-through' : '' }}">
-                                        {{ts.start}} - {{ts.end}}
-                                    </div>
-                                }
-                                </div>
-                            </div>
-                        </div>
-                    }                    
-                </div>                
-            </div>
-            }
-        </div>
-
-        <div style="display: flex; flex-direction: column;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 8px;">
-                <div>
-                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Date</div>
-                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
-                        <div class="">
-                            <p-datepicker inputId="calendar-12h" [(ngModel)]="date" fluid />
-                        </div>
-
-                    </div>
-                </div>
-                <div>
-                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Time</div>
-                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
-                        <div class="">
-                            <p-datepicker inputId="calendar-12h" [(ngModel)]="date" [timeOnly]="true" fluid />
-                        </div>
-
-                    </div>
-                </div>
-                <div>
-                    <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">AM / PM</div>
-                    <div style="display: flex;flex-direction: row; justify-content: space-between;">
-                        <p-select [(ngModel)]="timetable" inputId="over_label" [options]="['AM','PM']" 
-                            class="w-full" fluid />
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-        <div style="margin-top: 10px;">
-            <p-floatlabel>
-                <textarea pTextarea id="description" rows="5" style="resize: none" fluid></textarea>
-                <label for="description">Description</label>
-            </p-floatlabel>
-        </div>
-
-
-        <div class="col-12" style="display: flex; flex-direction: row; justify-content: right;">
-            <div style="display: flex; flex-direction: row; gap: 15px; align-items: center;">
-                <p-button label="Cancel" severity="warn" (click)="backToAppointmentList()" />
-            </div>
-            <div style="display:flex; gap:5px; align-items: center; padding: 10px;">
-                <p-button label="Schedule" severity="info" (click)="backToAppointmentList()" />
-            </div>
-        </div>
-        </div>
-
+<div class="card p-4 surface-card shadow-2 border-round">
+  
+  <div class="grid col-12 mb-4">
+    <div class="col-12 md:col-4 p-2">
+      <input type="date" [(ngModel)]="searchDate" (change)="searchDoctors()" class="w-full p-inputtext p-2 border-1 surface-border border-round" placeholder="Date">
     </div>
-
-
-    <!-- <div class="col-12">
-        <div class="bg-white p-3 border-round-lg flex flex-column gap-3">
-            <div style="margin-bottom: 10px;font-size: 12px;font-weight: bold;color:#667085;">Available Doctors</div>
-        <div class="col-12 shadow-1 border-round-md p-3" style="display: flex;flex-direction: row;">
-            <div class="col-2 shadow-2 border-round-md flex flex-column p-1 justify-content-center align-items-center gap-2 h-8rem text-center overflow-hidden">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_MlO3koV2GayVLm8an7l8W_Y3syrPmJHZQ2tX_Ev8w&s=10" alt="" class="border-round-3xl w-3rem h-3rem bg-primary shadow-1">
-                <div class="text-xs">Dr. Demo</div>
-                <div class="text-xs">ENT</div>
-            </div>
-            <div class="col-10" >
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 5px; grid-row: max;" class="overflow-x-auto">
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Mon</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Tue</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Wed</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Thu</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Fri</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Sat</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Sun</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div> </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-        <div class="col-12 shadow-1 border-round-md p-3" style="display: flex;flex-direction: row;">
-            <div class="col-2 shadow-2 border-round-md flex flex-column p-1 justify-content-center align-items-center gap-2 h-8rem text-center overflow-hidden">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_MlO3koV2GayVLm8an7l8W_Y3syrPmJHZQ2tX_Ev8w&s=10" alt="" class="border-round-3xl w-3rem h-3rem bg-primary shadow-1">
-                <div class="text-xs">Dr. Demo2</div>
-                <div class="text-xs">ENT</div>
-            </div>
-            <div class="col-10" >
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); column-gap: 5px; grid-row: max;" class="overflow-x-auto">
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Mon</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2 line-through">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Tue</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Wed</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Thu</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay">Fri</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Sat</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-column">
-                        <div class="apmntWeekDay disabled">Sun</div>
-                        <div class="overflow-x-auto ">
-                            <div class="h-8rem">
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">09:00 AM - 10:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">10:00 AM - 11:00 AM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">11:00 AM - 12:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">12:00 PM - 01:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">01:00 PM - 02:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">02:00 PM - 03:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">03:00 PM - 04:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">04:00 PM - 05:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">05:00 PM - 06:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">06:00 PM - 07:00 PM</div>
-                                <div class="white-space-nowrap text-xs mt-2 mb-2">07:00 PM - 08:00 PM</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div> </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-        </div>
-
-
+    <div class="col-12 md:col-4 p-2" >
+      <select [disabled]="searchDate == ''"
+      [(ngModel)]="selectedDepartment" 
+      (change)="searchDoctors()" 
+      class="w-full p-inputtext p-2 border-1 surface-border border-round"
+      >
+      <option [ngValue]="null" selected>Select Department</option>
+      @for (dept of departments; track dept.id) {
+        <option [ngValue]="dept">{{ dept.name }}</option>
+      }
+    </select>
+    </div>
+    <div class="col-12 md:col-4 p-2" >
+      <input type="text" [(ngModel)]="drNameSearch" (input)="searchDoctors()" class="w-full p-inputtext p-2 border-1 surface-border border-round" placeholder="Dr. Name" [disabled]="searchDate == ''">
+    </div>
+    
+    <!-- <div class="col-12 md:col-4 p-2">
+      <input type="text" [(ngModel)]="departmentName" (input)="searchDoctors()" class="w-full p-inputtext p-2 border-1 surface-border border-round" placeholder="Department Name" [disabled]="searchDate == ''">
     </div> -->
+  </div>
 
+  @if (doctors.length > 0) {
+    <div class="col-12 border-1 surface-border border-round p-3 mb-4 bg-white">
+      <h3 class="mt-0 text-600 font-medium text-sm">Available Doctors</h3>
+      <div class="flex flex-wrap gap-3">
+        @for (doc of doctors; track doc.id) {
+          <div 
+            (click)="selectDoctor(doc)"
+            [class.border-primary]="selectedDoctor?.id === doc.id"
+            class="cursor-pointer border-1 surface-border border-round p-2 flex flex-column align-items-center justify-content-center text-center hover:bg-lightgray transition-all"
+            style="width: 100px; height: 100px;">
+            <img [src]="doc.image" alt="Dr" class="border-round mb-1" style="width: 60px; height: 60px;">
+            <span class="text-xs font-semibold text-overflow-ellipsis overflow-hidden max-w-full white-space-nowrap">{{ doc.name }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (selectedDoctor) {
+    <div class="col-12 border-round p-4 mb-4" style="background: linear-gradient(180deg, #D4E6F7 0%, #A9CBEF 100%);">
+      <div class="grid text-center font-medium mb-3">
+        <div class="col-3 bg-white border-round p-2 border-1 surface-border">{{ selectedDoctor.name }}</div>
+        <div class="col-3 bg-white border-round p-2 border-1 surface-border ml-2">{{ searchDate | date: 'dd-MMM-yyyy' }}</div>
+        <div class="col-3 bg-white border-round p-2 border-1 surface-border ml-2">{{ getWeekdayName(searchDate) }}</div>
+      </div>
+
+      <div class="grid">
+        <div class="col-12 md:col-4 p-2">
+          <div class="bg-white border-round p-3 shadow-1 text-center h-full">
+            <span class="block text-700 font-medium mb-3">Morning</span>
+            <div class="grid shadow-3 p-2 border-round">
+              @for (slot of morningSlots; track slot.time) {
+                <div class="col-6 p-1">
+                  <button 
+                    (click)="selectSlot(slot)"
+                    [class.bg-red-600]="slot.status === 'booked'"
+                    [class.text-white]="slot.status === 'booked' || selectedSlot === slot.time"
+                    [class.bg-blue-100]="slot.status === 'available' && selectedSlot !== slot.time"
+                    [class.bg-primary]="selectedSlot === slot.time"
+                    class="w-full border-round border-none p-2 font-medium cursor-pointer text-xs transition-colors py-3">
+                    {{ slot.time }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-4 p-2">
+          <div class="bg-white border-round p-3 shadow-1 text-center h-full">
+            <span class="block text-700 font-medium mb-3">After Noon</span>
+            <div class="grid shadow-3 p-2 border-round">
+              @for (slot of afternoonSlots; track slot.time) {
+                <div class="col-6 p-1">
+                  <button 
+                    (click)="selectSlot(slot)"
+                    [class.bg-red-600]="slot.status === 'booked'"
+                    [class.text-white]="slot.status === 'booked' || selectedSlot === slot.time"
+                    [class.bg-blue-100]="slot.status === 'available' && selectedSlot !== slot.time"
+                    [class.bg-primary]="selectedSlot === slot.time"
+                    class="w-full border-round border-none p-2 font-medium cursor-pointer text-xs transition-colors py-3">
+                    {{ slot.time }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-4 p-2">
+          <div class="bg-white border-round p-3 shadow-1 text-center h-full">
+            <span class="block text-700 font-medium mb-3">Evening</span>
+            <div class="grid shadow-3 p-2 border-round">
+              @for (slot of eveningSlots; track slot.time) {
+                <div class="col-6 p-1">
+                  <button 
+                    (click)="selectSlot(slot)"
+                    [class.bg-red-600]="slot.status === 'booked'"
+                    [class.text-white]="slot.status === 'booked' || selectedSlot === slot.time"
+                    [class.bg-blue-100]="slot.status === 'available' && selectedSlot !== slot.time"
+                    [class.bg-primary]="selectedSlot === slot.time"
+                    class="w-full border-round border-none p-2 font-medium cursor-pointer text-xs transition-colors py-3">
+                    {{ slot.time }}
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (selectedSlot) {
+    <form [formGroup]="patientForm" class="col-12 border-round p-4" style="background-color: #A3C5EA;" [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+      
+      <h3 class="text-900 font-medium mt-0 mb-3">Patient Information</h3>
+      <div class="grid mb-4">
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="firstName" class="w-full p-2 border-1 border-round surface-border" placeholder="First Name">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="middleName" class="w-full p-2 border-1 border-round surface-border" placeholder="Middle Name">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="lastName" class="w-full p-2 border-1 border-round surface-border" placeholder="Last Name">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="primaryPhone" class="w-full p-2 border-1 border-round surface-border" placeholder="Primary Phone">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="secondaryPhone" class="w-full p-2 border-1 border-round surface-border" placeholder="Secondary Phone">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="email" formControlName="email" class="w-full p-2 border-1 border-round surface-border" placeholder="Email">
+        </div>
+      </div>
+
+      <h3 class="text-900 font-medium mt-0 mb-3">Emergency Contact Information</h3>
+      <div class="grid mb-4">
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="emergencyContactName" class="w-full p-2 border-1 border-round surface-border" placeholder="Emergency Contact Name">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="emergencyPhone" class="w-full p-2 border-1 border-round surface-border" placeholder="Emergency Phone">
+        </div>
+        <div class="col-12 md:col-4 p-2">
+          <input type="text" formControlName="emergency2ndPhone" class="w-full p-2 border-1 border-round surface-border" placeholder="Emergency 2nd Phone">
+        </div>
+      </div>
+
+      <div class="grid mb-4">
+        <div class="col-12 p-2">
+          <textarea formControlName="description" rows="4" class="w-full p-2 border-1 border-round surface-border" placeholder="Description" style="resize: none;"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end gap-3 mt-3">
+        <button type="button" (click)="onCancel()" class="p-button p-component bg-white text-700 border-1 surface-border border-round px-4 py-2 font-medium cursor-pointer hover:bg-gray-100">Cancel</button>
+        <button type="submit" class="p-button p-component bg-primary text-white border-none border-round px-4 py-2 font-medium cursor-pointer hover:bg-primary-reverse">OK</button>
+      </div>
+
+    </form>
+  }
 </div>

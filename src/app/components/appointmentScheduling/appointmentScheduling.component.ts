@@ -1,976 +1,169 @@
-﻿import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+﻿import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Button } from "primeng/button";
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { DatePickerModule } from 'primeng/datepicker';
-import { TextareaModule } from 'primeng/textarea';
-import { IftaLabelModule } from 'primeng/iftalabel';
-import { DividerModule } from 'primeng/divider';
-import { KeyValuePipe,TitleCasePipe } from '@angular/common';
-interface Paitent {
-    name: string;
-    id: number;
-}
-interface Department {
-    name: string;
-    id: number;
-}
-interface HolidaySchedule {
-  mon: boolean;
-  tue: boolean;
-  wed: boolean;
-  thu: boolean;
-  fri: boolean;
-  sat: boolean;
-  sun: boolean;
-}
-interface Timeslot {
-    start: string;
-    end: string;
-    isAvailable: boolean;
-}
-interface WeeklySlots {
-  mon: Timeslot[] | undefined;
-  tue: Timeslot[] | undefined;
-  wed: Timeslot[] | undefined;
-  thu: Timeslot[] | undefined;
-  fri: Timeslot[] | undefined;
-  sat: Timeslot[] | undefined;
-  sun: Timeslot[] | undefined;
-}
+import { Router } from "@angular/router";
+// Simple interfaces to model the data
 interface Doctor {
-    name: string;
-    id: number;
-    departmentId:number;
-    holidays:HolidaySchedule,
-    slot:WeeklySlots[]
+  id: number;
+  name: string;
+  departmentId: number;
+  image: string;
+  date: string;
 }
 
+interface TimeSlot {
+  time: string;
+  status: 'booked' | 'available' | 'selected';
+}
+interface Department {
+  name: string;
+  id: number;
+}
 @Component({
     standalone: true,
     selector: "ht-appointmentScheduling",
     templateUrl: "./appointmentScheduling.component.html",
     styleUrl: "./appointmentScheduling.component.css",
-    imports: [Button, FormsModule, SelectModule, FloatLabelModule, DatePickerModule, TextareaModule, IftaLabelModule, DividerModule,KeyValuePipe,TitleCasePipe ]
+    imports: [Button,CommonModule, FormsModule, ReactiveFormsModule],
 })
-
-
 class AppointmentScheduling {
-    constructor(private router: Router) {}
-    date ="";
+
     backToAppointmentList(){
         this.router.navigate(['/appointments']);
     }
+  // Search parameters
+  searchDate: string = '';
+  drNameSearch: string = '';
+  departmentName: string = '';
 
-    paitents: Paitent[] = [];
-    departments: Department[] = [];
-    doctors: Doctor[] = [];
-    filteredDoctors: Doctor[] = [];
-    paitent: Paitent | undefined;
-    department: Department | undefined;
-    doctor: Doctor | undefined;
-    timetable='';
-    dayOrder = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    sortDays = (a: any, b: any): number => {
-        return this.dayOrder.indexOf(a.key) - this.dayOrder.indexOf(b.key);
-    }
-    ngOnInit() {
-        this.paitents = [
-            { name: 'Ram', id: 1 },
-            { name: 'Sham', id: 2 },
-            { name: 'Raju', id: 3 },
-            { name: 'Komal', id: 4 },
-            { name: 'Priya', id: 5 }
-        ];
-        this.departments = [
-            { name: 'Cardiology', id: 1 },
-            { name: 'Orthopedics', id: 2 },
-            { name: 'Gynecology', id: 3 },
-            { name: 'Neurology', id: 4 },
-            { name: 'Pediatrics', id: 5 }
-        ];
-        
-        this.doctors = [
-            { name: 'Dr. Sam', id: 1,departmentId:1,holidays : {mon:true,tue:true,wed:true,thu:true,fri:true,sat:false,sun:false},
-            slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: false },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: true },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: true },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: true },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: true },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: true },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: true },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: true },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: true },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: true },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: true },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: true },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: true },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: true },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: true },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: true },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: true },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: true },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: true },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: true },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: true },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: true },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: true },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: true },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: true },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: true },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: true },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Ram', id: 2,departmentId:1,holidays : {mon:true,tue:true,wed:false,thu:true,fri:true,sat:true,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Ravi',id:3,departmentId:2,holidays : {mon:true,tue:false,wed:true,thu:false,fri:true,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Deepti', id: 4,departmentId:2,holidays : {mon:true,tue:true,wed:true,thu:false,fri:true,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Pooja', id: 5,departmentId:3,holidays : {mon:false,tue:true,wed:true,thu:true,fri:true,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Laxmi', id: 6,departmentId:3,holidays : {mon:true,tue:true,wed:false,thu:true,fri:true,sat:true,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Neha', id: 7,departmentId:4,holidays : {mon:true,tue:true,wed:true,thu:true,fri:true,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Priya', id: 8,departmentId:4,holidays : {mon:true,tue:false,wed:true,thu:false,fri:true,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] },
-            { name: 'Dr. Raman', id: 9,departmentId:5,holidays : {mon:true,tue:true,wed:true,thu:true,fri:false,sat:false,sun:false},
-        slot: [
-                {
-                    mon: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    tue: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    wed: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    thu: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    fri: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: false },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sat: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ],
-                    sun: [
-                    { start: "09:00 AM", end: "10:00 AM", isAvailable: true },
-                    { start: "10:00 AM", end: "11:00 AM", isAvailable: true },
-                    { start: "11:00 AM", end: "12:00 PM", isAvailable: false },
-                    { start: "12:00 PM", end: "01:00 PM", isAvailable: false },
-                    { start: "01:00 PM", end: "02:00 PM", isAvailable: false },
-                    { start: "02:00 PM", end: "03:00 PM", isAvailable: false },
-                    { start: "03:00 PM", end: "04:00 PM", isAvailable: false },
-                    { start: "04:00 PM", end: "05:00 PM", isAvailable: false },
-                    { start: "05:00 PM", end: "06:00 PM", isAvailable: false },
-                    { start: "06:00 PM", end: "07:00 PM", isAvailable: false },
-                    { start: "07:00 PM", end: "08:00 PM", isAvailable: false },
-                    ]
-                }
-            ] }
-        ];
-    }
-    onDepartmentChange(): void {
-        this.doctor = undefined; // Reset doctor selection using your ngModel variable
+  // Data arrays
+  doctors: Doctor[] = [];
+  selectedDoctor: Doctor | null = null;
+  selectedSlot: string | null = null;
+selectedDepartment: Department | null = null;
+  // Form group for patient details
+  patientForm: FormGroup;
+departments: Department[] = [
+  { name: 'Cardiology', id: 1 },
+  { name: 'Orthopedics', id: 2 },
+  { name: 'Gynecology', id: 3 },
+  { name: 'Neurology', id: 4 },
+  { name: 'Pediatrics', id: 5 }
+];
+  // Mock time slot categories mapping to UI layout
+  morningSlots: TimeSlot[] = [
+    { time: '08-09', status: 'booked' },
+    { time: '09-10', status: 'available' },
+    { time: '10-11', status: 'available' },
+    { time: '11-12', status: 'available' }
+  ];
 
-        // Use Optional Chaining (?.) to safely handle department being undefined
-        if (this.department) {
-            this.filteredDoctors = this.doctors.filter(
-                (doc) => doc.departmentId === this.department?.id
-            );
-        } else {
-            this.filteredDoctors = [];
-        }
-    }
+  afternoonSlots: TimeSlot[] = [
+    { time: '12-01', status: 'booked' },
+    { time: '01-02', status: 'available' },
+    { time: '02-03', status: 'available' },
+    { time: '03-04', status: 'available' }
+  ];
+
+  eveningSlots: TimeSlot[] = [
+    { time: '04-05', status: 'booked' },
+    { time: '05-06', status: 'available' },
+    { time: '06-07', status: 'available' },
+    { time: '07-08', status: 'available' }
+  ];
+doctorsAvailable:Doctor[] = [
+            { id: 1,name: 'Dr. Sam', departmentId:1,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8CVWhfoRsUH0fnBEp9SIvpuF-lhbX_tMiAPbCH-ldyQ&s=10",date:"2026-07-17"},
+            { id: 2,name: 'Dr. Sheetal', departmentId:2,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi-tzBJ3dm94MnYVJ1SaVbABDo2d9Aps3hwuIHDxbA8Q&s=10",date:"2026-07-17"},
+            { id: 3,name: 'Dr. Jyoti', departmentId:3,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi-tzBJ3dm94MnYVJ1SaVbABDo2d9Aps3hwuIHDxbA8Q&s=10",date:"2026-07-18"},
+            { id: 4,name: 'Dr. Rome', departmentId:4,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8CVWhfoRsUH0fnBEp9SIvpuF-lhbX_tMiAPbCH-ldyQ&s=10",date:"2026-07-16"},
+            { id: 5,name: 'Dr. Viney', departmentId:5,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8CVWhfoRsUH0fnBEp9SIvpuF-lhbX_tMiAPbCH-ldyQ&s=10",date:"2026-07-16"},
+        ];
+  constructor(private router: Router,private fb: FormBuilder) {
+    this.patientForm = this.fb.group({
+      firstName: ['', Validators.required],
+      middleName: [''],
+      lastName: ['', Validators.required],
+      primaryPhone: ['', Validators.required],
+      secondaryPhone: [''],
+      email: ['', [Validators.required, Validators.email]],
+      emergencyContactName: ['', Validators.required],
+      emergencyPhone: ['', Validators.required],
+      emergency2ndPhone: [''],
+      description: ['']
+    });
+  }
+
+  getWeekdayName(dateString: string): string {
+    const date = new Date(dateString);
+    const day = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
+    return day.charAt(0).toUpperCase() + day.slice(1).toLowerCase();
 }
 
+  // Step 1 Trigger: Triggered on input change or search button click
+  searchDoctors() {
+    if (this.searchDate || this.drNameSearch || this.selectedDepartment) {
+      // Mock API response matching the image layout grid
+      this.doctors = this.doctorsAvailable.filter((doc) => {
+        const matchesName = this.drNameSearch 
+          ? doc.name.toLowerCase().includes(this.drNameSearch.toLowerCase()) 
+          : true;
+          
+        const matchesDepartment = this.selectedDepartment 
+          ? doc.departmentId === this.selectedDepartment?.id 
+          : true;
+          
+        // Add your date filtering logic here if needed (e.g., doc.availableDates.includes(this.searchDate))
+        const matchesDate = this.searchDate ? doc.date.includes(this.searchDate) : true; 
+
+        return matchesName && matchesDepartment && matchesDate;
+      }).map((doc) => ({
+        id:doc.id,
+        name: doc.name,
+        departmentId: doc.departmentId,
+        date: doc.date,
+        image: doc.image // Replace with your real assets
+      }));
+      
+      // Reset subsequent steps if fresh search happens
+      this.selectedDoctor = null;
+      this.selectedSlot = null;
+    }
+  }
+
+  // Step 2 Selection
+  selectDoctor(doctor: Doctor) {
+    this.selectedDoctor = doctor;
+    this.selectedSlot = null; // Reset slot if doctor changes
+  }
+
+  // Step 3 Selection
+  selectSlot(slot: TimeSlot) {
+    if (slot.status === 'booked') return;
+    this.selectedSlot = slot.time;
+  }
+
+  // Submit Action
+  onSubmit() {
+    if (this.patientForm.valid) {
+      const payload = {
+        date: this.searchDate,
+        doctor: this.selectedDoctor,
+        slot: this.selectedSlot,
+        patientDetails: this.patientForm.value
+      };
+      console.log('Booking Confirmed Payload:', payload);
+      // Call your HTTP Service here
+    } else {
+      this.patientForm.markAllAsTouched();
+    }
+  }
+
+  onCancel() {
+    // Reset wizard
+    this.selectedDoctor = null;
+    this.selectedSlot = null;
+    this.patientForm.reset();
+  }
+}
 export default AppointmentScheduling;
